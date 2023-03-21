@@ -1,21 +1,58 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"time"
 
-	"github.com/ostafen/clover"
+	"github.com/nem0z/cda/scrapper"
 )
 
+func worker(indexs <-chan int, result chan *scrapper.Post) {
+	for i := range indexs {
+		res, err := scrapper.Process(i)
+		if err != nil {
+			log.Fatal(err)
+		}
+		result <- res
+	}
+}
+
 func main() {
-	db, _ := clover.Open("storage")
-	db.CreateCollection("myCollection")
+	start := 286049
+	n := 1000
 
-	doc := clover.NewDocument()
-	doc.Set("hello", "clover!")
+	jobs := make(chan int, n)
+	result := make(chan *scrapper.Post, n)
 
-	docId, _ := db.InsertOne("myCollection", doc)
+	s := time.Now()
 
-	doc, _ = db.Query("myCollection").FindById(docId)
-	log.Println(doc.Get("hello"))
+	for i := 0; i < 10; i++ {
+		go worker(jobs, result)
+	}
 
+	for i := start; i >= start-n; i-- {
+		jobs <- i
+	}
+
+	ok := 0
+	done := 0
+	go func() {
+		for {
+			time.Sleep(time.Second / 1)
+			fmt.Printf("%v/%v pages parsed out of %v\n", ok, done, n)
+		}
+	}()
+
+	for i := 0; i < n; i++ {
+		select {
+		case post := <-result:
+			done++
+			if post.Content != "" {
+				ok++
+			}
+		}
+	}
+
+	fmt.Printf("%v/%v pages parsed out of %v in %v\n", ok, done, n, time.Since(s))
 }
