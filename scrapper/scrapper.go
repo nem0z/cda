@@ -40,7 +40,7 @@ func Process(index int) (*Post, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("status code error: (%d) %s", res.StatusCode, res.Status))
+		return nil, &StatusError{res}
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
