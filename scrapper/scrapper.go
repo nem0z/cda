@@ -1,7 +1,6 @@
 package scrapper
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -46,6 +45,10 @@ func Process(index int) (*Post, error) {
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if doc.Find("title").First().Text() == "Coin des Affaires" {
+		return nil, &DoNotExistError{}
 	}
 
 	headlineText := doc.Find(".postingheadline").First().Text()
