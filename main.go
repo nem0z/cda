@@ -1,21 +1,26 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"time"
 
-	"github.com/ostafen/clover"
+	"github.com/nem0z/cda/scrapper"
 )
 
 func main() {
-	db, _ := clover.Open("storage")
-	db.CreateCollection("myCollection")
+	start := 285086
+	n := 1000
 
-	doc := clover.NewDocument()
-	doc.Set("hello", "clover!")
+	timeStart := time.Now()
 
-	docId, _ := db.InsertOne("myCollection", doc)
+	posts := scrapper.Process(start, n)
 
-	doc, _ = db.Query("myCollection").FindById(docId)
-	log.Println(doc.Get("hello"))
+	cpt := 0
+	for _, ok := range posts {
+		if ok != nil {
+			cpt++
+		}
+	}
 
+	fmt.Printf("Found %v posts in %v!\n", cpt, time.Since(timeStart))
 }
