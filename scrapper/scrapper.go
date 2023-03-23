@@ -5,34 +5,15 @@ import (
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/nem0z/cda/types"
 )
 
 const baseUrl = "https://cda.chronomania.net"
 const path = "/forum_entry.php"
 
-type Headline struct {
-	status string
-	title  string
-	price  string
-}
-
-type Author struct {
-	name string
-	date string
-}
-
-type Post struct {
-	Index     int
-	head      *Headline
-	author    *Author
-	Content   string
-	imgs      []string
-	signature string
-}
-
 type Processed struct {
 	index int
-	post  *Post
+	post  *types.Post
 }
 
 type Rejected struct {
@@ -52,9 +33,9 @@ func worker(indexs <-chan int, result chan *Processed, reject chan *Rejected) {
 	}
 }
 
-func Process(start int, n int) map[int]*Post {
+func Process(start int, n int) map[int]*types.Post {
 	processing := true
-	results := make(map[int]*Post)
+	results := make(map[int]*types.Post)
 
 	jobs := make(chan int, n)
 	result := make(chan *Processed, n)
@@ -89,7 +70,7 @@ func Process(start int, n int) map[int]*Post {
 	return results
 }
 
-func ProcessOne(index int) (*Post, error) {
+func ProcessOne(index int) (*types.Post, error) {
 	url := fmt.Sprintf("%v%v?id=%v", baseUrl, path, index)
 
 	res, err := http.Get(url)
@@ -111,9 +92,9 @@ func ProcessOne(index int) (*Post, error) {
 		return nil, DoNotExistError{}
 	}
 
-	headlineText := doc.Find(".postingheadline").First().Text()
+	headlineText := doc.Find(".types.Postingheadline").First().Text()
 	authorSection := doc.Find(".author").First()
-	post := doc.Find(".posting").First()
+	post := doc.Find(".types.Posting").First()
 	images := ParseImages(post)
 	signature, err := doc.Find(".signature").First().Html()
 	if err != nil {
@@ -123,12 +104,12 @@ func ProcessOne(index int) (*Post, error) {
 	headline := ParseHeadline(headlineText)
 	author := ParseAuthor(authorSection)
 
-	return &Post{
-		index,
-		headline,
-		author,
-		post.Text(),
-		images,
-		signature,
+	return &types.Post{
+		Index:     index,
+		Head:      headline,
+		Author:    author,
+		Content:   post.Text(),
+		Images:    images,
+		Signature: signature,
 	}, nil
 }
