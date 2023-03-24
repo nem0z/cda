@@ -1,21 +1,21 @@
 package types
 
 type Headline struct {
-	Status string `json:"status"`
-	Title  string `json:"title"`
-	Price  string `json:"price"`
+	Status string `bson:"status"`
+	Title  string `bson:"title"`
+	Price  string `bson:"price"`
 }
 
 type Author struct {
-	Name string `json:"name"`
-	Date string `json:"date"`
+	Name string `bson:"name"`
+	Date string `bson:"date"`
 }
 
 type Post struct {
-	Index     int       `json:"index"`
-	Head      *Headline `json:"head"`
-	Author    *Author   `json:"author"`
-	Content   string    `json:"content"`
-	Images    []string  `json:"images"`
-	Signature string    `json:"signature"`
+	Index     int       `bson:"index"`
+	Head      *Headline `bson:"head"`
+	Author    *Author   `bson:"author"`
+	Content   string    `bson:"content"`
+	Images    []string  `bson:"images"`
+	Signature string    `bson:"signature"`
 }
