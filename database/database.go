@@ -52,3 +52,14 @@ func (m *Mongo) FindOne(id interface{}) (*types.Post, error) {
 	err := m.posts.FindOne(m.ctx, bson.M{"_id": id}).Decode(&post)
 	return post, err
 }
+
+func (m *Mongo) FindAll() (*types.Post, error) {
+	post := &types.Post{}
+	err := m.posts.FindOne(m.ctx, bson.M{}).Decode(&post)
+	return post, err
+}
+
+func (m *Mongo) Clear() error {
+	_, err := m.posts.DeleteMany(m.ctx, bson.M{})
+	return err
+}
