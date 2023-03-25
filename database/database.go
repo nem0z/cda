@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/nem0z/cda/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -42,7 +41,6 @@ func Init() (*Mongo, error) {
 }
 
 func (m *Mongo) InsertOne(post *types.Post) (interface{}, error) {
-	fmt.Println("Inserted", post.Index)
 	result, err := m.posts.InsertOne(m.ctx, post)
 	return result.InsertedID, err
 }
