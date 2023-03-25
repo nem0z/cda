@@ -4,26 +4,27 @@ import (
 	"regexp"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/nem0z/cda/types"
 )
 
-func ParseHeadline(headline string) *Headline {
+func ParseHeadline(headline string) *types.Headline {
 	re := regexp.MustCompile(`^\[(.*?)\]\s(.*?)\s-\s(\d+)\&euro;$`)
 	matches := re.FindStringSubmatch(headline)
 
 	if len(matches) == 4 {
-		return &Headline{
-			matches[1],
-			matches[2],
-			matches[3],
+		return &types.Headline{
+			Status: matches[1],
+			Title:  matches[2],
+			Price:  matches[3],
 		}
 	}
 	return nil
 }
 
-func ParseAuthor(div *goquery.Selection) *Author {
-	return &Author{
-		div.Find("p.author b").Text(),
-		div.Find("p.author").Contents().Last().Text(),
+func ParseAuthor(div *goquery.Selection) *types.Author {
+	return &types.Author{
+		Name: div.Find("p.author b").Text(),
+		Date: div.Find("p.author").Contents().Last().Text(),
 	}
 }
 
