@@ -108,8 +108,8 @@ func ProcessOne(index int) (*types.Post, error) {
 		Index:     index,
 		Head:      headline,
 		Author:    author,
-		Content:   post.Text(),
+		Content:   fmt.Sprintf("%q\n", post.Text()),
 		Images:    images,
-		Signature: signature,
+		Signature: fmt.Sprintf("%q\n", signature),
 	}, nil
 }
