@@ -41,13 +41,13 @@ func Init() (*Mongo, error) {
 	}, nil
 }
 
-func (m *Mongo) Insert(post *types.Post) (interface{}, error) {
+func (m *Mongo) InsertOne(post *types.Post) (interface{}, error) {
 	fmt.Println("Inserted", post.Index)
 	result, err := m.posts.InsertOne(m.ctx, post)
 	return result.InsertedID, err
 }
 
-func (m *Mongo) Find(id interface{}) (*types.Post, error) {
+func (m *Mongo) FindOne(id interface{}) (*types.Post, error) {
 	post := &types.Post{}
 	err := m.posts.FindOne(m.ctx, bson.M{"_id": id}).Decode(&post)
 	return post, err
