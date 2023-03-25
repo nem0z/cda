@@ -92,9 +92,9 @@ func ProcessOne(index int) (*types.Post, error) {
 		return nil, DoNotExistError{}
 	}
 
-	headlineText := doc.Find(".types.Postingheadline").First().Text()
+	headlineText := doc.Find(".postingheadline").First().Text()
 	authorSection := doc.Find(".author").First()
-	post := doc.Find(".types.Posting").First()
+	post := doc.Find(".posting").First()
 	images := ParseImages(post)
 	signature, err := doc.Find(".signature").First().Html()
 	if err != nil {
